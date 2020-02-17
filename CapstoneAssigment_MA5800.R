@@ -13,8 +13,6 @@ library(GPArotation)
 library(cluster)
 library(nonlinearTseries)
 
-#rm(list = ls()) 
-
 dataset <- read.csv("Data/ESMdata.csv", header = TRUE)
 dataset$dayno <- dataset$dayno[order(dataset$dayno)]
 dataset$dayno <- as.numeric(factor(dataset$dayno)) # re factor 'dayno' due to gaps in 'dayno'
