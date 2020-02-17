@@ -31,8 +31,8 @@ cddf <- as.data.frame(cd)
 cddf$index <- seq.int(nrow(cddf))
 
 ggplot(cddf, aes(x = index, y = cd)) +
-   geom_point(color="red") +
-   geom_hline(yintercept = 4*mean(cd), color="blue") 
+  geom_point(color="red") +
+  geom_hline(yintercept = 4*mean(cd), color="blue") 
 
 #removed influentials
 influential <- as.numeric(names(cd)[(cd > 4*mean(cd, na.rm=T))]) 
@@ -138,38 +138,37 @@ moods.dfa$moodsums_dfa = NA
 # determine DFA, in a moving window of 20 days
 window <- 21
 for (i in seq(window, max(moods$dayno), 1)) {
-
+  
   # get the sliding window data
   sliding.window <- subset(moods, dayno > (i - window) & dayno <= i)
-    
+  
   # moodsums
   dfa.anal <- dfa(time.series = sliding.window$moodsums,
-                      npoints = 30,
-                      window.size.range = c(10, nrow(sliding.window)),
-                      do.plot = FALSE)
+                  npoints = 30,
+                  window.size.range = c(10, nrow(sliding.window)),
+                  do.plot = FALSE)
   
   fgn.est <- estimate(dfa.anal) 
-
+  
   moods.dfa$moodsums_dfa[moods.dfa$dayno == i] <- fgn.est
-  }
+}
 fit_cluster_kmeans$size
 #assessment periods
 rects <- data.frame(xstart = c(1, 29,43,99,156), xend = c(28,42,98,155,238)) #(Kossakowski et al., 2017)
 
 ggplot(data = na.omit(moods.dfa$moods.dfa)) + 
-      geom_point() +
-      geom_rect(data=rects, aes( xmin=xstart, xmax=xend, ymin = -Inf, ymax = Inf), alpha =0.1) + 
-      geom_line(aes(x=moods.dfa$dayno, y=moods.dfa$moodsums_dfa, colour= factor(moods.dfa$groups),  group=1 ), ) +
-      ylab("DFA (21-day window)") + 
-      xlim(c(0, 250)) + 
-      theme(plot.title = element_text(hjust = 0.5)) +
-      labs(title = "Mental States over Test Period with phases (shadowed) \n", x = "Test Day Number", y = "21 day Window" )  +
-      scale_color_discrete(name = "Mental State Groups",  labels=c("Mood Positive", "Mood Uncertain", "Mood Worried", "Mood Negitive"))    +  
-      annotate("text", x = 15, y = 2.08, label = "Baseline") +  
-      annotate("text", x = 38, y = 2.08, label = "No Change") +
-      annotate("text", x = 70, y = 2.08, label = "Reduced AD") +
-      annotate("text", x = 125, y = 2.08, label = "Post test") +
-      annotate("text", x = 195, y = 2.08, label = "Follow up")
-  
-  
-   
+  geom_point() +
+  geom_rect(data=rects, aes( xmin=xstart, xmax=xend, ymin = -Inf, ymax = Inf), alpha =0.1) + 
+  geom_line(aes(x=moods.dfa$dayno, y=moods.dfa$moodsums_dfa, colour= factor(moods.dfa$groups),  group=1 ), ) +
+  ylab("DFA (21-day window)") + 
+  xlim(c(0, 250)) + 
+  theme(plot.title = element_text(hjust = 0.5)) +
+  labs(title = "Mental States over Test Period with phases (shadowed) \n", x = "Test Day Number", y = "21 day Window" )  +
+  scale_color_discrete(name = "Mental State Groups",  labels=c("Mood Positive", "Mood Uncertain", "Mood Worried", "Mood Negitive"))    +  
+  annotate("text", x = 15, y = 2.08, label = "Baseline") +  
+  annotate("text", x = 38, y = 2.08, label = "No Change") +
+  annotate("text", x = 70, y = 2.08, label = "Reduced AD") +
+  annotate("text", x = 125, y = 2.08, label = "Post test") +
+  annotate("text", x = 195, y = 2.08, label = "Follow up")
+
+
