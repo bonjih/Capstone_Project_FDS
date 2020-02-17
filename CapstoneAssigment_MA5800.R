@@ -166,8 +166,8 @@ ggplot(data = na.omit(moods.dfa$moods.dfa)) +
       labs(title = "Mental States over Test Period with phases (shadowed) \n", x = "Test Day Number", y = "21 day Window" )  +
       scale_color_discrete(name = "Mental State Groups",  labels=c("Mood Positive", "Mood Uncertain", "Mood Worried", "Mood Negitive"))    +  
       annotate("text", x = 15, y = 2.08, label = "Baseline") +  
-      annotate("text", x = 36, y = 2.06, label = "No Change") +
-      annotate("text", x = 70, y = 2.08, label = "Reduce AD") +
+      annotate("text", x = 38, y = 2.08, label = "No Change") +
+      annotate("text", x = 70, y = 2.08, label = "Reduced AD") +
       annotate("text", x = 125, y = 2.08, label = "Post test") +
       annotate("text", x = 195, y = 2.08, label = "Follow up")
   
