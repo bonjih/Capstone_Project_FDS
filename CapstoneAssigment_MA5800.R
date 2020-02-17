@@ -13,7 +13,7 @@ library(GPArotation)
 library(cluster)
 library(nonlinearTseries)
 
-rm(list = ls()) 
+#rm(list = ls()) 
 
 dataset <- read.csv("Data/ESMdata.csv", header = TRUE)
 dataset$dayno <- dataset$dayno[order(dataset$dayno)]
@@ -57,6 +57,8 @@ ggplot(data=tsne_V1V2, aes(x=V1, y=V2, color=tsne_original$cl_kmeans)) +
   geom_point() + 
   theme(plot.title = element_text(hjust = 0.5)) +
   labs(title = "Mental State Clusters\n", x = "Dim 1", y = "Dim 2", color = "Mental State Clusters\n")  
+
+fit_cluster_kmeans$size
 
 ####################
 #Corrolation matrix 20 mood types
@@ -135,10 +137,8 @@ moods$groups <- as.numeric(tsne_original$cl_kmeans)
 moods.dfa <- moods %>% group_by(dayno) %>% summarise(moodsums = mean(moodsums), groups = floor(mean(groups)))
 moods.dfa$moodsums_dfa = NA
 
-fit_cluster_kmeans$size
-
 # determine DFA, in a moving window of 20 days
-window <- 2
+window <- 21
 for (i in seq(window, max(moods$dayno), 1)) {
 
   # get the sliding window data
@@ -154,7 +154,7 @@ for (i in seq(window, max(moods$dayno), 1)) {
 
   moods.dfa$moodsums_dfa[moods.dfa$dayno == i] <- fgn.est
   }
-
+fit_cluster_kmeans$size
 #assessment periods
 rects <- data.frame(xstart = c(1, 29,43,99,156), xend = c(28,42,98,155,238)) #(Kossakowski et al., 2017)
 
@@ -165,8 +165,8 @@ ggplot(data = na.omit(moods.dfa$moods.dfa)) +
       ylab("DFA (21-day window)") + 
       xlim(c(0, 250)) + 
       theme(plot.title = element_text(hjust = 0.5)) +
-      labs(title = "Mental States over Test Period with phases (shadowed) \n", x = "Day Number", y = "21 day Window" )  +
-      scale_color_discrete(name = "Mental State Groups",  labels=c("Mood Positive", "Mood Uncertain", "Mood Negitive", "Mood Worried"))    +  
+      labs(title = "Mental States over Test Period with phases (shadowed) \n", x = "Test Day Number", y = "21 day Window" )  +
+      scale_color_discrete(name = "Mental State Groups",  labels=c("Mood Positive", "Mood Uncertain", "Mood Worried", "Mood Negitive"))    +  
       annotate("text", x = 15, y = 2.08, label = "Baseline") +  
       annotate("text", x = 36, y = 2.06, label = "No Change") +
       annotate("text", x = 70, y = 2.08, label = "Reduce AD") +
