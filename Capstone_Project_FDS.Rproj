@@ -1,13 +1,56 @@
-Version: 1.0
+library(cluster)
+library(ggplot2)
 
-RestoreWorkspace: Default
-SaveWorkspace: Default
-AlwaysSaveHistory: Default
+rm(list = ls()) 
 
-EnableCodeIndexing: Yes
-UseSpacesForTab: Yes
-NumSpacesForTab: 2
-Encoding: UTF-8
+creditUrl <- "https://archive.ics.uci.edu/ml/machine-learning-databases/credit-screening/crx.data"
+Data <- read.table(creditUrl, na.strings = "?", header=FALSE, sep = ",")
 
-RnwWeave: Sweave
-LaTeX: pdfLaTeX
+names(Data) <- c("Gender", "Age", "MonthlyExpenses", "MaritalStatus", "HomeStatus", "Occupation", "BankingInstitution", "YearsEmployed", "NoPriorDefault", "Employed", "CreditScore", "DriversLicense", "AccountType", "MonthlyIncome", "AccountBalance", "Approved")
+
+Data$Gender <- as.factor(Data$Gender) 
+Data$Age <- as.numeric(Data$Age)
+Data$MonthlyExpenses <- as.integer(Data$MonthlyExpenses) 
+Data$MaritalStatus <- as.factor(Data$MaritalStatus) 
+Data$HomeStatus <- as.factor(Data$HomeStatus) 
+Data$Occupation <- as.factor(Data$Occupation) 
+Data$BankingInstitution <- as.factor(Data$BankingInstitution) 
+Data$YearsEmployed <- as.numeric(Data$YearsEmployed) 
+Data$NoPriorDefault <- as.factor(Data$NoPriorDefault) 
+Data$Employed <- as.factor(Data$Employed) 
+Data$CreditScore <- as.numeric(Data$CreditScore) 
+Data$DriversLicense <- as.factor(Data$DriversLicense)
+Data$AccountType <- as.factor(Data$AccountType) 
+Data$MonthlyIncome <- as.integer(Data$MonthlyIncome) 
+Data$AccountBalance <- as.numeric(Data$AccountBalance) 
+Data$Approved <- as.factor(Data$Approved)
+
+sum(is.na(Data))
+
+Data <- na.omit(Data)
+
+Dist <- daisy(Data, metric = c("gower"), type=list())
+Dist <- as.matrix(Dist)  
+
+#dim <- ncol(Dist)  # used to define axis in image
+#image(1:dim, 1:dim, Dist, axes = FALSE, xlab="", ylab="", col = rainbow(100))
+
+#heatmap(Dist, Rowv=TRUE, Colv="Rowv", symm = TRUE)
+num_cor <- cor(Data[c(2, 8, 11, 14, 15)])
+DataCorsSpear <- cor(num_cor , method="spearman") 
+DataCorsPear <- cor(num_cor , method="pearson") 
+
+accountBalBox <- ggplot(Data, aes(x=Approved, y=AccountBalance)) + 
+  geom_boxplot()
+
+monExpBox <- ggplot(Data, aes(x=Approved, y=MonthlyExpenses)) + 
+  geom_boxplot()
+
+credScoreBalBox <- ggplot(Data, aes(x=Approved, y=CreditScore)) + 
+  geom_boxplot()
+
+ageBox <- ggplot(Data, aes(x=Approved, y=Age)) + 
+  geom_boxplot()
+
+
+
