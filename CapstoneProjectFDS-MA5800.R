@@ -40,9 +40,7 @@ infRmDf <- dataset[-influential, ]
 
 #reduce n dimenssions to 2 for ggplot (there are better packages than ggplot for PCA/EFA etc)
 tsne.pca = Rtsne(as.matrix(infRmDf[c(2:21)]), scale = TRUE, check_duplicates=FALSE, pca=TRUE, perplexity=100, theta=0.5, dims=2)
-
 tsne_V1V2 = as.data.frame(tsne.pca$Y)
-
 tsne_original <- tsne_V1V2
 
 #kmeans - optimal groups -> 3 (Eigenvalue >1)
@@ -171,5 +169,3 @@ ggplot(data = na.omit(moods.dfa$moods.dfa)) +
   annotate("text", x = 70, y = 2.08, label = "Reduced AD") +
   annotate("text", x = 125, y = 2.08, label = "Post test") +
   annotate("text", x = 195, y = 2.08, label = "Follow up")
-
-
