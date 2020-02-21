@@ -47,6 +47,7 @@ tsne_original <- tsne_V1V2
 fit_cluster_kmeans <-  kmeans(scale(tsne_V1V2), 4)
 tsne_original$cl_kmeans <-  factor(fit_cluster_kmeans$cluster)
 
+fit_cluster_kmeans$size
 tsne_V1V2$cluster <- tsne_original$cl_kmeans
 
 ggplot(data=tsne_V1V2, aes(x=V1, y=V2, color=tsne_original$cl_kmeans)) + 
@@ -68,7 +69,7 @@ fa_cor$RowNumber <- seq.int(nrow(fa_cor))
 #Assumption Test for FA/PCA  
 #cortest.bartlett(infRmDf[c(2:21)], n=1406) #(Snedecor et al 1989)
 #out -> Bartlett's test is significant, x2(190) = 23514.21, p < .001 - (Cerny & Kaiser 1977, pp.43-47)
-# and therefore factor analysis is appropriate.
+#therefore factor analysis is appropriate.
 #KMO(r = infRmDf[, c(2:21)]) #Overall MSA =  0.94 
 #fa.parallel(infRmDf[,c(2:21)],fm="pa") #quasi 4
 #alpha(infRmDf[c(2:21)], check.keys=TRUE) #Cronbach alpha, >0.94 - (Yurdugül, H, 2008)
@@ -106,11 +107,11 @@ fa.groups <- print.psych(fa.pca , cut = 0.43, sort = TRUE)
 #Assign groups based on PCA routed / further PCA analaysys not done here
 #fa_cor[fa_cor$RowNumber %in% c(16, 20, 12, 9, 11, 7, 4, 17, 19), "groups"] <- "Mood Positive"
 #fa_cor[fa_cor$RowNumber %in% c(3, 14, 13, 1), "groups"] <- "Mood Uncertain"
-#fa_cor[fa_cor$RowNumber %in% c(15, 8, 18, 2), "groups"] <- "Mood Negitive"
+#fa_cor[fa_cor$RowNumber %in% c(15, 8, 18, 2), "groups"] <- "Mood Negative"
 #fa_cor[fa_cor$RowNumber %in% c(6, 10, 5), "groups"] <- "Mood Worried"
 
 #mood status summarise
-#########################
+##########################
 # negative affect
 Mood_Positive <- c(17, 21,13, 10, 12, 8, 5, 18, 20)
 infRmDf$mp <-  infRmDf %>% select(Mood_Positive) %>% rowMeans(.,na.rm = TRUE)
@@ -118,8 +119,8 @@ infRmDf$mp <-  infRmDf %>% select(Mood_Positive) %>% rowMeans(.,na.rm = TRUE)
 Mood_Uncertain <- c(4, 15, 14, 2)
 infRmDf$mu <- infRmDf %>% select(Mood_Uncertain) %>% rowMeans(.,na.rm = TRUE)
 
-Mood_Negitive <- c(16, 9, 19, 3)
-infRmDf$mn <- infRmDf %>% select(Mood_Negitive) %>% rowMeans(.,na.rm = TRUE)
+Mood_Negative <- c(16, 9, 19, 3)
+infRmDf$mn <- infRmDf %>% select(Mood_Negative) %>% rowMeans(.,na.rm = TRUE)
 
 Mood_Worried <- c(7, 11, 6)
 infRmDf$mw <- infRmDf %>% select(Mood_Worried) %>% rowMeans(.,na.rm = TRUE)
@@ -132,7 +133,7 @@ infRmDf$groups <- as.numeric(tsne_original$cl_kmeans)
 moods.dfa <- infRmDf %>% group_by(dayno) %>% summarise(moodsums = mean(moodsums), groups = floor(mean(groups)))
 moods.dfa$moodsums_dfa = NA
 
-# determine DFA, in a moving window of 20 days
+# determine DFA, in a moving window of 31 days
 window <- 31
 for (i in seq(window, max(moods.dfa$dayno), 1)) {
   
@@ -150,20 +151,18 @@ for (i in seq(window, max(moods.dfa$dayno), 1)) {
   moods.dfa$moodsums_dfa[moods.dfa$dayno == i] <- fgn.est
 }
 
-#fit_cluster_kmeans$size
-
 #assessment periods
 rects <- data.frame(xstart = c(1, 29,43,99,156), xend = c(28,42,98,155,240)) #(Kossakowski et al., 2017)
 
 ggplot(data = na.omit(moods.dfa$moods.dfa)) + 
   geom_point() +
   geom_rect(data=rects, aes( xmin=xstart, xmax=xend, ymin = -Inf, ymax = Inf), alpha =0.1) + 
-  geom_line(aes(x=moods.dfa$dayno, y=moods.dfa$moodsums_dfa, colour= factor(moods.dfa$groups),group=1 )) +
+  geom_line(aes(x=moods.dfa$dayno, y=moods.dfa$moodsums_dfa, colour= factor(moods.dfa$groups),  group=1 ), ) +
   ylab("DFA (21-day window)") + 
   xlim(c(0, 250)) + 
   theme(plot.title = element_text(hjust = 0.5)) +
   labs(title = "Mental States over Test Period with phases (shadowed) \n", x = "Test Day Number", y = "31 day Window" )  +
-  scale_color_discrete(name = "Mental State Groups",  labels=c("Mood Positive", "Mood Uncertain", "Mood Worried", "Mood Negitive"))    +  
+  scale_color_discrete(name = "Mental State Groups",  labels=c("Mood Positive", "Mood Uncertain", "Mood Worried", "Mood Negative" )) +  
   annotate("text", x = 15, y = 2.08, label = "Baseline") +  
   annotate("text", x = 38, y = 2.08, label = "No Change") +
   annotate("text", x = 70, y = 2.08, label = "Reduced AD") +
