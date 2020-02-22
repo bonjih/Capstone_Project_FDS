@@ -13,8 +13,6 @@ library(GPArotation)
 library(cluster)
 library(nonlinearTseries)
 
-#rm(list = ls())
-
 dataset <- read.csv("Data/ESMdata.csv", header = TRUE)
 dataset$dayno <- dataset$dayno[order(dataset$dayno)]
 dataset$dayno <- as.numeric(factor(dataset$dayno)) # re factor 'dayno' due to gaps in 'dayno'
@@ -157,7 +155,7 @@ rects <- data.frame(xstart = c(1, 29,43,99,156), xend = c(28,42,98,155,240)) #(K
 ggplot(data = na.omit(moods.dfa$moods.dfa)) + 
   geom_point() +
   geom_rect(data=rects, aes( xmin=xstart, xmax=xend, ymin = -Inf, ymax = Inf), alpha =0.1) + 
-  geom_line(aes(x=moods.dfa$dayno, y=moods.dfa$moodsums_dfa, colour= factor(moods.dfa$groups),  group=1 ), ) +
+  geom_line(aes(x=moods.dfa$dayno, y=moods.dfa$moodsums_dfa, colour= factor(moods.dfa$groups),  group=1)) +
   ylab("DFA (21-day window)") + 
   xlim(c(0, 250)) + 
   theme(plot.title = element_text(hjust = 0.5)) +
